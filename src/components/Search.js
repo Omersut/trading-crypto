@@ -37,7 +37,6 @@ function Search({
       <div
         style={{
           width: "250px",
-
           margin: "7px",
           height: "250px",
         }}

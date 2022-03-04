@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useList } from "../context/ListContext";
 import Search from "./Search";
-import WalletDetail from "./WalletDetail";
 
 function List() {
   const { items, usd, setUSD } = useList();
@@ -11,12 +10,17 @@ function List() {
 
   localStorage.setItem("usd", JSON.stringify(usd));
 
-  fetch(
-    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
-  )
-    .then((res) => res.json())
-    .then((res) => setList(res))
-    .catch((e) => console.log(e));
+  const data = () => {
+    fetch(
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
+    )
+      .then((res) => res.json())
+      .then((res) => setList(res))
+      .catch((e) => console.log(e));
+  };
+  useEffect(() => {
+    data();
+  }, [items]);
 
   const filteredCoins = list.filter((item) =>
     item.name.toLowerCase().includes(filterText.toLowerCase())
@@ -76,8 +80,98 @@ function List() {
           data-bs-target="#offcanvasRight"
           aria-controls="offcanvasRight"
         >
-          Wallet <span class="badge bg-dark">{items.length}</span>
+          Wallet <span className="badge bg-dark">{items.length}</span>
         </button>
+
+        <button
+          style={{ marginLeft: "5px", border: "solid 1px black" }}
+          className="btn btn-primary"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseExample"
+          aria-expanded="false"
+          aria-controls="collapseExample"
+        >
+          Profile
+        </button>
+        <button
+          style={{ marginLeft: "5px", border: "solid 1px black" }}
+          type="button"
+          class="btn btn-secondary"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          data-bs-whatever="@mdo"
+        >
+          ⚙️
+        </button>
+        <div
+          className="modal fade"
+          id="exampleModal"
+          tabIndex={-1}
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  New message
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
+              </div>
+              <div className="modal-body">
+                <form>
+                  <div className="mb-3">
+                    <label htmlFor="recipient-name" className="col-form-label">
+                      Recipient:
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="recipient-name"
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="message-text" className="col-form-label">
+                      Message:
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="message-text"
+                      defaultValue={""}
+                    />
+                  </div>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="button" className="btn btn-primary">
+                  Send message
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="collapse" id="collapseExample">
+          <div className="card card-body">
+            Some placeholder content for the collapse component. This panel is
+            hidden by default but revealed when the user activates the relevant
+            trigger.
+          </div>
+        </div>
+
         <div
           className="offcanvas offcanvas-end"
           tabIndex={-1}
@@ -94,7 +188,6 @@ function List() {
             />
           </div>
           <div className="offcanvas-body">
-            {" "}
             <span>
               <button
                 style={{ margin: "5px" }}
@@ -104,21 +197,7 @@ function List() {
                 {JSON.parse(localStorage.getItem("usd")).toFixed(0)}$
               </button>
             </span>
-            {items.map((coin) => {
-              return (
-                <WalletDetail
-                  item={coin}
-                  key={coin.id}
-                  name={coin.name}
-                  image={coin.image}
-                  symbol={coin.symbol}
-                  marketcap={coin.market_cap}
-                  price={coin.current_price}
-                  priceChange={coin.price_change_percentage_24h}
-                  volume={coin.total_volume}
-                />
-              );
-            })}
+            {}
           </div>
         </div>
       </div>
@@ -130,8 +209,17 @@ function List() {
         }}
         className="row"
       >
-        {filteredCoins.map((coin) => (
-          <Search item={coin} />
+        {filteredCoins.map((coin, i) => (
+          <div
+            style={{
+              width: "250px",
+              margin: "7px",
+              height: "250px",
+            }}
+            key={i}
+          >
+            <Search item={coin} />
+          </div>
         ))}
       </div>
     </div>
