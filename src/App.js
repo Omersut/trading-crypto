@@ -4,26 +4,27 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 function App() {
-  const [loggedin, setIsloggedin] = useState(
-    localStorage.getItem("loggedin") ? "true" : "false"
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || null
   );
+  useEffect(() => {
+    localStorage.setItem("username", JSON.stringify(username));
+  }, [username]);
 
-  const Submit = async () => {
-    setIsloggedin("true");
-
-    localStorage.setItem("loggedin", JSON.stringify(loggedin));
+  const Submit = (e) => {
+    setUsername(e.target.value);
   };
 
   return (
     <div className="App">
-      {loggedin == "false" ? (
+      {username == null ? (
         <div style={{ marginTop: "230px" }} className="form">
           <div className="subtitle">Welcome 👋 Let's create your account!</div>
           <div className="input-container ic1">
             <input
               style={{ marginTop: "10px" }}
-              id="username"
-              type="text"
+              value={username}
+              onChange={Submit}
               placeholder="username"
             />
             <button style={{ marginLeft: "2px" }} onClick={Submit} type="text">

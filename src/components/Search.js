@@ -13,23 +13,20 @@ function Search({
   volume,
 }) {
   // context basket
-  const { addToList, items, removeFromList, usd, setUSD } = useList();
-  const findListItem = items.find((list_item) => list_item._id === key);
-  const [inWalled, setInwallet] = useState(false);
+  const { addToList, wallet, setWallet, removeFromList, usd, setUSD } =
+    useList();
+  const walletItem = wallet.find((a) => a.id === item.id);
 
-  const Add = async () => {
+  const Add = () => {
     if (usd > item.current_price) {
+      setUSD(usd - item.current_price);
+
       addToList(item);
-      setInwallet(true);
-      setUSD(parseInt(localStorage.getItem("usd")) - item.current_price);
-      localStorage.setItem("usd", JSON.stringify(usd));
     }
   };
-  const Remove = async () => {
-    removeFromList(item.id);
-    setInwallet(false);
-    setUSD(parseInt(localStorage.getItem("usd")) + item.current_price);
-    localStorage.setItem("usd", JSON.stringify(usd));
+  const Remove = () => {
+    setUSD(usd + item.current_price);
+    removeFromList(item);
   };
 
   return (
@@ -63,7 +60,9 @@ function Search({
                 display: "inline",
               }}
             >
-              <strong style={{ color: "black" }}> {item.current_price}</strong>
+              <strong style={{ color: "black" }}>
+                {(walletItem && walletItem.amount) || 0}
+              </strong>
             </h4>
           </div>
           <div
@@ -73,16 +72,14 @@ function Search({
               justifyContent: "center",
             }}
           >
-            {!inWalled && (
-              <button
-                style={{ margin: "5px", height: "41px", width: "45%" }}
-                type="button"
-                className="btn btn-success"
-                onClick={Add}
-              >
-                BUY
-              </button>
-            )}
+            <button
+              style={{ margin: "5px", height: "41px", width: "45%" }}
+              type="button"
+              className="btn btn-success"
+              onClick={Add}
+            >
+              BUY
+            </button>
             <button
               style={{ margin: "5px", width: "45%" }}
               type="button"
@@ -92,18 +89,17 @@ function Search({
                   : "btn btn-outline-success"
               }
             >
-              {item.market_cap_change_percentage_24h.toFixed(1)}%
+              {item.market_cap_change_percentage_24h}%
             </button>
-            {inWalled && (
-              <button
-                style={{ margin: "5px", height: "41px", width: "45%" }}
-                type="button"
-                className="btn btn-danger"
-                onClick={Add}
-              >
-                ✗
-              </button>
-            )}
+            <button
+              style={{ margin: "5px", height: "41px", width: "45%" }}
+              type="button"
+              disabled={!walletItem}
+              className="btn btn-danger"
+              onClick={Remove}
+            >
+              ✗
+            </button>
           </div>
         </div>
       </div>

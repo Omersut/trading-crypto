@@ -4,11 +4,12 @@ import { useList } from "../context/ListContext";
 import Search from "./Search";
 
 function List() {
-  const { items, usd, setUSD } = useList();
+  const { wallet, usd, setUSD, items } = useList();
   const [list, setList] = useState([]);
   const [filterText, setFilterText] = useState("");
-
-  localStorage.setItem("usd", JSON.stringify(usd));
+  const [total, setTotal] = useState(
+    JSON.parse(localStorage.getItem("total")) || 100000
+  );
 
   const data = () => {
     fetch(
@@ -20,7 +21,19 @@ function List() {
   };
   useEffect(() => {
     data();
-  }, [items]);
+    const t = wallet.reduce((acc, item) => {
+      return (
+        acc +
+        item.amount * items.find((coin) => coin.id === item.id).current_price
+      );
+    }, 0);
+    setTotal(usd + t);
+    localStorage.setItem("usd", JSON.stringify(usd));
+    localStorage.setItem("total", JSON.stringify(total));
+    localStorage.setItem("t", JSON.stringify(t));
+    localStorage.setItem("wallet", JSON.stringify(wallet));
+    localStorage.setItem("items", JSON.stringify(items));
+  }, [wallet]);
 
   const filteredCoins = list.filter((item) =>
     item.name.toLowerCase().includes(filterText.toLowerCase())
@@ -49,7 +62,29 @@ function List() {
               className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
               style={{ bsScrollHeight: "100px" }}
             >
-              <li className="nav-item"></li>
+              <li className="nav-item" style={{ marginLeft: "5px" }}>
+                <button
+                  style={{ margin: "3px", border: "solid 1px black" }}
+                  className="btn btn-primary"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseExample"
+                  aria-expanded="false"
+                  aria-controls="collapseExample"
+                >
+                  Profile
+                </button>
+                <button
+                  style={{ margin: "3px", border: "solid 1px black" }}
+                  className="btn btn-warning"
+                  type="button"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasRight"
+                  aria-controls="offcanvasRight"
+                >
+                  Wallet <span className="badge bg-dark">{wallet.length}</span>
+                </button>
+              </li>
 
               <li className="nav-item"></li>
             </ul>
@@ -63,7 +98,7 @@ function List() {
                 type="text"
                 placeholder="Coin Name"
               />
-              <button s className="btn btn-outline-primary" type="submit">
+              <button className="btn btn-outline-primary" type="submit">
                 Search
               </button>
             </form>
@@ -71,39 +106,7 @@ function List() {
         </div>
       </nav>
 
-      <div style={{ marginTop: "15px" }}>
-        <button
-          style={{ border: "solid 1px black" }}
-          className="btn btn-warning"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasRight"
-          aria-controls="offcanvasRight"
-        >
-          Wallet <span className="badge bg-dark">{items.length}</span>
-        </button>
-
-        <button
-          style={{ marginLeft: "5px", border: "solid 1px black" }}
-          className="btn btn-primary"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#collapseExample"
-          aria-expanded="false"
-          aria-controls="collapseExample"
-        >
-          Profile
-        </button>
-        <button
-          style={{ marginLeft: "5px", border: "solid 1px black" }}
-          type="button"
-          class="btn btn-secondary"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-          data-bs-whatever="@mdo"
-        >
-          ⚙️
-        </button>
+      <div style={{ marginTop: "10px" }}>
         <div
           className="modal fade"
           id="exampleModal"
@@ -115,7 +118,7 @@ function List() {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">
-                  New message
+                  Settings
                 </h5>
                 <button
                   type="button"
@@ -125,40 +128,25 @@ function List() {
                 />
               </div>
               <div className="modal-body">
-                <form>
-                  <div className="mb-3">
-                    <label htmlFor="recipient-name" className="col-form-label">
-                      Recipient:
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="recipient-name"
-                    />
+                <div className="mb-3">
+                  <label className="col-form-label">Theme</label>
+                  <div>
+                    <button
+                      style={{ margin: "5px" }}
+                      className="btn btn-outline-dark"
+                      type="submit"
+                    >
+                      Dark
+                    </button>
+                    <button
+                      style={{ margin: "5px" }}
+                      className="btn btn-dark"
+                      type="submit"
+                    >
+                      Light
+                    </button>
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="message-text" className="col-form-label">
-                      Message:
-                    </label>
-                    <textarea
-                      className="form-control"
-                      id="message-text"
-                      defaultValue={""}
-                    />
-                  </div>
-                </form>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button type="button" className="btn btn-primary">
-                  Send message
-                </button>
+                </div>
               </div>
             </div>
           </div>
@@ -166,9 +154,35 @@ function List() {
 
         <div className="collapse" id="collapseExample">
           <div className="card card-body">
-            Some placeholder content for the collapse component. This panel is
-            hidden by default but revealed when the user activates the relevant
-            trigger.
+            <h3>{localStorage.getItem("username")}</h3>
+            <span>
+              <button
+                style={{
+                  margin: "3px",
+                  border: "solid 1px black",
+                }}
+                type="button"
+                className="btn btn-dark"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                data-bs-whatever="@mdo"
+              >
+                ⚙️
+              </button>
+              <a href="/">
+                <button
+                  style={{
+                    margin: "3px",
+                    border: "solid 1px black",
+                  }}
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={() => localStorage.clear()}
+                >
+                  LogOut
+                </button>
+              </a>
+            </span>
           </div>
         </div>
 
@@ -194,16 +208,29 @@ function List() {
                 type="button"
                 className="btn btn-outline-dark"
               >
-                {JSON.parse(localStorage.getItem("usd")).toFixed(0)}$
+                TOTAL: {total}$
+              </button>
+              <button
+                style={{ margin: "5px" }}
+                type="button"
+                className="btn btn-outline-dark"
+              >
+                {usd} USD
               </button>
             </span>
-            {}
+            <div style={{ marginLeft: "43px" }}>
+              {items.map((item, i) => (
+                <span key={i}>
+                  <Search item={item} />
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
       <div
         style={{
-          marginTop: "20px",
+          marginTop: "10px",
           display: "center",
           justifyContent: "center",
         }}
