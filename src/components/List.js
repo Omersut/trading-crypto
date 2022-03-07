@@ -292,9 +292,9 @@ function List({ username }) {
           <div
             className="carddd"
             style={{
-              width: "290px",
+              width: "300px",
               marginTop: "30px",
-              height: "290px",
+              height: "300px",
               margin: "15px",
             }}
             key={i}
