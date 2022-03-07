@@ -106,6 +106,15 @@ function List({ username }) {
                     {moneyFormat(total)}
                   </span>
                 </button>
+                <button
+                  style={{ margin: "3px", border: "solid 1px black" }}
+                  className={total < 100000 ? "btn btn-dark" : "btn btn-dark"}
+                >
+                  USD{" "}
+                  <span style={{ fontSize: "13px" }} className="badge bg-dark">
+                    {moneyFormat(usd)}
+                  </span>
+                </button>
               </li>
             </ul>
             <form className="d-flex">
