@@ -21,31 +21,28 @@ function List({ username }) {
       .then((res) => res.json())
       .then((res) => setList(res))
       .catch((e) => console.log(e));
+    setTimeout(() => {
+      setTotal(usd + t);
+    }, 2000);
   };
+
   useEffect(() => {
     data();
+
     const t = wallet.reduce((acc, item) => {
       return (
         acc +
         item.amount * items.find((coin) => coin.id === item.id).current_price
       );
     }, 0);
-    setTotal(usd + t);
+
     localStorage.setItem("usd", JSON.stringify(usd));
     localStorage.setItem("total", JSON.stringify(total));
     localStorage.setItem("t", JSON.stringify(t));
     localStorage.setItem("wallet", JSON.stringify(wallet));
     localStorage.setItem("items", JSON.stringify(items));
-  }, [wallet, page]);
-  setTimeout(() => {
-    const t = wallet.reduce((acc, item) => {
-      return (
-        acc +
-        item.amount * items.find((coin) => coin.id === item.id).current_price
-      );
-    }, 0);
-    setTotal(usd + t);
-  }, 2500);
+    data();
+  }, [wallet, page, total]);
 
   const filteredCoins = list.filter((item) =>
     item.name.toLowerCase().includes(filterText.toLowerCase())
@@ -84,6 +81,7 @@ function List({ username }) {
                   style={{ margin: "3px", border: "solid 1px black" }}
                   className="btn btn-primary"
                   type="button"
+                  onClick={data}
                   data-bs-toggle="collapse"
                   data-bs-target="#collapseExample"
                   aria-expanded="false"
