@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useList } from "../context/ListContext";
 import Search from "./Search";
+import WalletList from "./WalletList";
 
-function List() {
+function List({ username }) {
+  const [page, setPage] = useState(76);
   const { wallet, usd, setUSD, items } = useList();
   const [list, setList] = useState([]);
   const [filterText, setFilterText] = useState("");
@@ -13,7 +15,7 @@ function List() {
 
   const data = () => {
     fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${page}&page=1&sparkline=false`
     )
       .then((res) => res.json())
       .then((res) => setList(res))
@@ -33,7 +35,7 @@ function List() {
     localStorage.setItem("t", JSON.stringify(t));
     localStorage.setItem("wallet", JSON.stringify(wallet));
     localStorage.setItem("items", JSON.stringify(items));
-  }, [wallet]);
+  }, [wallet, page]);
 
   const filteredCoins = list.filter((item) =>
     item.name.toLowerCase().includes(filterText.toLowerCase())
@@ -41,7 +43,12 @@ function List() {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-black position-sticky fixed-top">
+      <nav
+        style={{
+          boxShadow: "0px 10px #1E90FF",
+        }}
+        className="navbar navbar-expand-lg navbar-dark bg-black position-sticky fixed-top"
+      >
         <div className="container-fluid">
           <Link className="navbar-brand" to="/">
             <h5>crypto</h5>
@@ -86,7 +93,19 @@ function List() {
                 </button>
               </li>
 
-              <li className="nav-item"></li>
+              <li className="nav-item">
+                <button
+                  style={{ margin: "3px", border: "solid 1px black" }}
+                  className={
+                    total < 100000 ? "btn btn-danger" : "btn btn-success"
+                  }
+                >
+                  📈{" "}
+                  <span style={{ fontSize: "13px" }} className="badge bg-dark">
+                    {total.toFixed(3)}
+                  </span>
+                </button>
+              </li>
             </ul>
             <form className="d-flex">
               <input
@@ -106,7 +125,7 @@ function List() {
         </div>
       </nav>
 
-      <div style={{ marginTop: "10px" }}>
+      <div style={{ marginTop: "15px" }}>
         <div
           className="modal fade"
           id="exampleModal"
@@ -133,14 +152,14 @@ function List() {
                   <div>
                     <button
                       style={{ margin: "5px" }}
-                      className="btn btn-outline-dark"
+                      className="btn btn-dark"
                       type="submit"
                     >
                       Dark
                     </button>
                     <button
                       style={{ margin: "5px" }}
-                      className="btn btn-dark"
+                      className="btn btn-outline-dark"
                       type="submit"
                     >
                       Light
@@ -154,8 +173,33 @@ function List() {
 
         <div className="collapse" id="collapseExample">
           <div className="card card-body">
-            <h3>{localStorage.getItem("username")}</h3>
-            <span>
+            <h2 style={{ margin: "20px" }}>
+              <span
+                style={{
+                  boxShadow: "5px 10px #888888",
+                  border: "4px solid #1E90FF",
+                  padding: "8px",
+                  borderRadius: "5px",
+                }}
+              >
+                {username}
+              </span>
+            </h2>
+            <span style={{ marginTop: "20px" }}>
+              <button
+                style={{ margin: "5px" }}
+                type="button"
+                className="btn btn-outline-dark"
+              >
+                TOTAL: {total.toFixed(3)}$
+              </button>
+              <button
+                style={{ margin: "5px" }}
+                type="button"
+                className="btn btn-outline-dark"
+              >
+                {usd.toFixed(2)} USD
+              </button>
               <button
                 style={{
                   margin: "3px",
@@ -183,6 +227,7 @@ function List() {
                 </button>
               </a>
             </span>
+            <span></span>
           </div>
         </div>
 
@@ -208,22 +253,28 @@ function List() {
                 type="button"
                 className="btn btn-outline-dark"
               >
-                TOTAL: {total}$
+                TOTAL: {total.toFixed(3)}$
               </button>
               <button
                 style={{ margin: "5px" }}
                 type="button"
                 className="btn btn-outline-dark"
               >
-                {usd} USD
+                {usd.toFixed(2)} USD
               </button>
             </span>
-            <div style={{ marginLeft: "43px" }}>
-              {items.map((item, i) => (
-                <span key={i}>
-                  <Search item={item} />
-                </span>
-              ))}
+            <div style={{ padding: "2rem 3rem" }} className="container">
+              <div className="row">
+                <div className="col-12 col-sm-12 col-lg-12">
+                  <ul className="list-group">
+                    {items.map((item, i) => (
+                      <span key={i}>
+                        <WalletList item={item} />
+                      </span>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -239,9 +290,10 @@ function List() {
         {filteredCoins.map((coin, i) => (
           <div
             style={{
-              width: "250px",
-              margin: "7px",
-              height: "250px",
+              width: "270px",
+              marginTop: "30px",
+              height: "270px",
+              margin: "15px",
             }}
             key={i}
           >
@@ -249,6 +301,14 @@ function List() {
           </div>
         ))}
       </div>
+      <button
+        style={{ margin: "30px" }}
+        onClick={() => setPage(page + 26)}
+        className="btn btn-outline-dark"
+        type="submit"
+      >
+        Load More 💱
+      </button>
     </div>
   );
 }

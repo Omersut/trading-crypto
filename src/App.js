@@ -5,11 +5,16 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [username, setUsername] = useState(
-    localStorage.getItem("username") || null
+    JSON.parse(localStorage.getItem("username")) || ""
   );
+  const [loggedin, setloggedin] = useState(
+    JSON.parse(localStorage.getItem("loggedin")) || false
+  );
+
   useEffect(() => {
     localStorage.setItem("username", JSON.stringify(username));
-  }, [username]);
+    localStorage.setItem("loggedin", JSON.stringify(loggedin));
+  }, [loggedin]);
 
   const Submit = (e) => {
     setUsername(e.target.value);
@@ -17,17 +22,27 @@ function App() {
 
   return (
     <div className="App">
-      {username == null ? (
-        <div style={{ marginTop: "230px" }} className="form">
+      {loggedin == false ? (
+        <div
+          style={{
+            marginTop: "230px",
+          }}
+          className="form"
+        >
           <div className="subtitle">Welcome 👋 Let's create your account!</div>
           <div className="input-container ic1">
             <input
-              style={{ marginTop: "10px" }}
               value={username}
               onChange={Submit}
               placeholder="username"
+              aria-label="Username"
+              aria-describedby="basic-addon1"
             />
-            <button style={{ marginLeft: "2px" }} onClick={Submit} type="text">
+            <button
+              style={{ margin: "5px" }}
+              onClick={() => setloggedin(true)}
+              type="button"
+            >
               Submit
             </button>
           </div>
@@ -35,7 +50,7 @@ function App() {
       ) : (
         <Router>
           <Routes>
-            <Route path="/" element={<List />} />
+            <Route path="/" element={<List username={username} />} />
           </Routes>
         </Router>
       )}
