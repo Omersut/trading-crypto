@@ -33,9 +33,9 @@ function Search({
     <>
       <div
         style={{
-          width: "270px",
+          width: "290px",
           margin: "1px",
-          height: "270px",
+          height: "290px",
           border: "2px solid",
 
           boxShadow: "5px 10px #888888",

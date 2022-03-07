@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useList } from "../context/ListContext";
 import Search from "./Search";
 import WalletList from "./WalletList";
+import { moneyFormat } from "../helpers";
 
 function List({ username }) {
   const [page, setPage] = useState(76);
@@ -102,7 +103,7 @@ function List({ username }) {
                 >
                   📈{" "}
                   <span style={{ fontSize: "13px" }} className="badge bg-dark">
-                    {total.toFixed(3)}
+                    {moneyFormat(total)}
                   </span>
                 </button>
               </li>
@@ -253,14 +254,14 @@ function List({ username }) {
                 type="button"
                 className="btn btn-outline-dark"
               >
-                TOTAL: {total.toFixed(3)}$
+                TOTAL: {moneyFormat(total)}$
               </button>
               <button
                 style={{ margin: "5px" }}
                 type="button"
                 className="btn btn-outline-dark"
               >
-                {usd.toFixed(2)} USD
+                {moneyFormat(usd)} USD
               </button>
             </span>
             <div style={{ padding: "2rem 3rem" }} className="container">
@@ -289,10 +290,11 @@ function List({ username }) {
       >
         {filteredCoins.map((coin, i) => (
           <div
+            className="carddd"
             style={{
-              width: "270px",
+              width: "290px",
               marginTop: "30px",
-              height: "270px",
+              height: "290px",
               margin: "15px",
             }}
             key={i}

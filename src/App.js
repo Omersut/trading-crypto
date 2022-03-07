@@ -2,6 +2,7 @@ import "./App.css";
 import List from "./components/List";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Footer from "./components/Footer";
 
 function App() {
   const [username, setUsername] = useState(
@@ -54,6 +55,9 @@ function App() {
           </Routes>
         </Router>
       )}
+      <hr />
+      <Footer />
+      <br />
     </div>
   );
 }
