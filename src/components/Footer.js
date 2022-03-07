@@ -18,7 +18,7 @@ function Footer() {
             color: "rgb(50,50,50)",
             fontSize: "20px",
           }}
-          href="https://www.linkedin.com/in/tayfundagci/"
+          href="https://www.linkedin.com/in/omersut/"
           target="blank"
         >
           /omerSut
@@ -33,12 +33,12 @@ function Footer() {
           marginTop: "-14px",
         }}
       >
-        <a href="https://www.github.com/tayfundagci/" target="blank">
+        <a href="https://www.github.com/omersut/" target="blank">
           <BsGithub size={"33"} style={{ color: "rgb(50,50,50)" }} />
         </a>
         <a
           className="ms-2"
-          href="https://www.linkedin.com/in/tayfundagci/"
+          href="https://www.linkedin.com/in/omersut/"
           target="blank"
         >
           <AiFillLinkedin size={"40"} style={{ color: "rgb(50,50,50)" }} />
