@@ -37,6 +37,15 @@ function List({ username }) {
     localStorage.setItem("wallet", JSON.stringify(wallet));
     localStorage.setItem("items", JSON.stringify(items));
   }, [wallet, page]);
+  setTimeout(() => {
+    const t = wallet.reduce((acc, item) => {
+      return (
+        acc +
+        item.amount * items.find((coin) => coin.id === item.id).current_price
+      );
+    }, 0);
+    setTotal(usd + t);
+  }, 2500);
 
   const filteredCoins = list.filter((item) =>
     item.name.toLowerCase().includes(filterText.toLowerCase())
