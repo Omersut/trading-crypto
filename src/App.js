@@ -34,13 +34,15 @@ function App() {
           }}
           className="form"
         >
-          <div className="subtitle">Welcome 👋 Let's create your account!</div>
+          <h4 style={{ marginBottom: "16px" }} className="subtitle">
+            Welcome 👋 Let's create your account!
+          </h4>
           <div className="input-container ic1">
             <form onSubmit={login}>
               <input
                 value={username}
                 onChange={Submit}
-                placeholder="username"
+                placeholder="@username"
                 aria-label="Username"
                 aria-describedby="basic-addon1"
               />

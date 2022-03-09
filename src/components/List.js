@@ -25,9 +25,6 @@ function List({ username }) {
 
   useEffect(() => {
     data();
-    setTimeout(() => {
-      setTotal(usd + t);
-    }, 2000);
 
     const t = wallet.reduce((acc, item) => {
       return (
@@ -35,13 +32,13 @@ function List({ username }) {
         item.amount * items.find((coin) => coin.id === item.id).current_price
       );
     }, 0);
+    setInterval(setTotal(usd + t), 2000);
 
     localStorage.setItem("usd", JSON.stringify(usd));
     localStorage.setItem("total", JSON.stringify(total));
     localStorage.setItem("t", JSON.stringify(t));
     localStorage.setItem("wallet", JSON.stringify(wallet));
     localStorage.setItem("items", JSON.stringify(items));
-    data();
   }, [wallet, page, total]);
 
   const filteredCoins = list.filter((item) =>
@@ -208,14 +205,14 @@ function List({ username }) {
                 type="button"
                 className="btn btn-outline-dark"
               >
-                TOTAL: {total.toFixed(3)}$
+                TOTAL: {moneyFormat(total)}$
               </button>
               <button
                 style={{ margin: "5px" }}
                 type="button"
                 className="btn btn-outline-dark"
               >
-                {usd.toFixed(2)} USD
+                {moneyFormat(usd)} USD
               </button>
               <button
                 style={{
