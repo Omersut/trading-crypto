@@ -20,6 +20,10 @@ function App() {
   const Submit = (e) => {
     setUsername(e.target.value);
   };
+  const login = (e) => {
+    e.preventDefault();
+    setloggedin(true);
+  };
 
   return (
     <div className="App">
@@ -32,20 +36,18 @@ function App() {
         >
           <div className="subtitle">Welcome 👋 Let's create your account!</div>
           <div className="input-container ic1">
-            <input
-              value={username}
-              onChange={Submit}
-              placeholder="username"
-              aria-label="Username"
-              aria-describedby="basic-addon1"
-            />
-            <button
-              style={{ margin: "5px" }}
-              onClick={() => setloggedin(true)}
-              type="button"
-            >
-              Submit
-            </button>
+            <form onSubmit={login}>
+              <input
+                value={username}
+                onChange={Submit}
+                placeholder="username"
+                aria-label="Username"
+                aria-describedby="basic-addon1"
+              />
+              <button style={{ margin: "5px" }} type="submit" hidden>
+                Submit
+              </button>
+            </form>
           </div>
         </div>
       ) : (

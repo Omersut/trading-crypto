@@ -21,13 +21,13 @@ function List({ username }) {
       .then((res) => res.json())
       .then((res) => setList(res))
       .catch((e) => console.log(e));
-    setTimeout(() => {
-      setTotal(usd + t);
-    }, 2000);
   };
 
   useEffect(() => {
     data();
+    setTimeout(() => {
+      setTotal(usd + t);
+    }, 2000);
 
     const t = wallet.reduce((acc, item) => {
       return (
