@@ -53,6 +53,7 @@ const ListProvider = ({ children }) => {
     usd,
     setUSD,
     items,
+    setItems,
   };
 
   return <ListContext.Provider value={values}>{children}</ListContext.Provider>;

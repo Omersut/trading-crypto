@@ -7,15 +7,15 @@ import { moneyFormat } from "../helpers";
 
 function List({ username }) {
   const [page, setPage] = useState(76);
-  const { wallet, usd, setUSD, items } = useList();
+  const { wallet, usd, setUSD, items, setItems } = useList();
   const [list, setList] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [total, setTotal] = useState(
     JSON.parse(localStorage.getItem("total")) || 100000
   );
 
-  const data = () => {
-    fetch(
+  const data = async () => {
+    await fetch(
       `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${page}&page=1&sparkline=false`
     )
       .then((res) => res.json())
@@ -29,7 +29,10 @@ function List({ username }) {
     const t = wallet.reduce((acc, item) => {
       return (
         acc +
-        item.amount * items.find((coin) => coin.id === item.id).current_price
+        item.amount *
+          (xarray[0] !== undefined
+            ? xarray.find((coin) => coin.id === item.id).current_price
+            : items.find((coin) => coin.id === item.id).current_price)
       );
     }, 0);
     setInterval(setTotal(usd + t), 2000);
@@ -44,6 +47,11 @@ function List({ username }) {
   const filteredCoins = list.filter((item) =>
     item.name.toLowerCase().includes(filterText.toLowerCase())
   );
+  let xarray = [];
+  items.forEach((element) => {
+    let live = list.find((x) => x.id == element.id);
+    xarray.push(live);
+  });
 
   return (
     <div>
@@ -281,11 +289,12 @@ function List({ username }) {
               <div className="row">
                 <div className="col-12 col-sm-12 col-lg-12">
                   <ul className="list-group">
-                    {items.map((item, i) => (
-                      <span key={i}>
-                        <WalletList item={item} />
-                      </span>
-                    ))}
+                    {xarray[0] !== undefined &&
+                      xarray.map((item, i) => (
+                        <span key={i}>
+                          <WalletList item={item} />
+                        </span>
+                      ))}
                   </ul>
                 </div>
               </div>
