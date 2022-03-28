@@ -34,8 +34,8 @@ function List({ username }) {
             ? xarray.find((coin) => coin.id === item.id).current_price
             : items.find((coin) => coin.id === item.id).current_price)
       );
-      setTotal(usd + t);
     }, 0);
+    setTotal(usd + t);
 
     localStorage.setItem("usd", JSON.stringify(usd));
     localStorage.setItem("total", JSON.stringify(total));
