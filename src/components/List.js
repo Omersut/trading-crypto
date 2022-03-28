@@ -35,10 +35,11 @@ function List({ username }) {
             : items.find((coin) => coin.id === item.id).current_price)
       );
     }, 0);
-    setTotal(usd + t);
+
+    setTotal(t + usd);
 
     localStorage.setItem("usd", JSON.stringify(usd));
-    localStorage.setItem("total", JSON.stringify(total));
+    localStorage.setItem("total", JSON.stringify(t + usd));
     localStorage.setItem("t", JSON.stringify(t));
     localStorage.setItem("wallet", JSON.stringify(wallet));
     localStorage.setItem("items", JSON.stringify(items));
