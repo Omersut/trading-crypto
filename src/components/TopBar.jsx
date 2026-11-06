@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useI18n } from "../i18n";
 
 export function Logo() {
@@ -13,10 +14,27 @@ export function Logo() {
   );
 }
 
-export default function TopBar({ onHelp, children }) {
+/**
+ * Sticky top bar. Its height is published as --topbar-h so other sticky
+ * elements (search bar, table header) can sit right below it.
+ * `below` renders a strip that hangs under the bar without pushing content.
+ */
+export default function TopBar({ onHelp, children, below }) {
   const { t, toggleLang, lang } = useI18n();
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const set = () => document.documentElement.style.setProperty("--topbar-h", `${el.offsetHeight}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <header className="topbar">
+    <header className="topbar" ref={ref}>
       <div className="wrap topbar-in">
         <Logo />
         <nav className="topbar-actions" aria-label="Site">
@@ -36,6 +54,7 @@ export default function TopBar({ onHelp, children }) {
           </button>
         </nav>
       </div>
+      {below}
     </header>
   );
 }

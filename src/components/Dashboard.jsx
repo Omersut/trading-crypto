@@ -6,6 +6,7 @@ import TopBar from "./TopBar";
 import Footer from "./Footer";
 import Ticker from "./Ticker";
 import TradeDialog from "./TradeDialog";
+import ScrollTop from "./ScrollTop";
 import { HelpDialog } from "./HowTo";
 
 function UserMenu() {
@@ -39,12 +40,35 @@ function UserMenu() {
   );
 }
 
-function Summary() {
+const pnlDir = (pnl) => trend(Math.abs(pnl) < 0.005 ? 0 : pnl);
+
+/** Compact summary that hangs under the top bar once the big one scrolls away. */
+function MiniBar({ show }) {
   const { t, locale } = useI18n();
   const { summary, account } = useStore();
-  const dir = trend(Math.abs(summary.pnl) < 0.005 ? 0 : summary.pnl);
   return (
-    <section className="summary wrap" aria-label={t.totalValue}>
+    <div className={`mini-bar ${show ? "show" : ""}`} aria-hidden={!show}>
+      <div className="wrap mini-in">
+        <span className="mini-item">
+          <span className="mini-label">{t.totalValue}</span>
+          <strong className="num">{usd(summary.total, locale)}</strong>
+          <span className={`num chg ${pnlDir(summary.pnl)}`}>{pct(summary.pnlPct, locale)}</span>
+        </span>
+        <span className="mini-item">
+          <span className="mini-label">{t.cash}</span>
+          <strong className="num">{usd(account.cash, locale)}</strong>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function Summary({ innerRef }) {
+  const { t, locale } = useI18n();
+  const { summary, account } = useStore();
+  const dir = pnlDir(summary.pnl);
+  return (
+    <section className="summary wrap" aria-label={t.totalValue} ref={innerRef}>
       <div className="sum-main">
         <span className="sum-label">{t.totalValue}</span>
         <strong className="sum-total num">{usd(summary.total, locale)}</strong>
@@ -103,9 +127,22 @@ function Market({ onTrade }) {
           aria-label={t.search}
         />
         <span className="muted status">
-          {status.updatedAt && <>{t.updated}: <span className="num">{clock(status.updatedAt, locale)}</span></>}
-          <button className="link-btn" onClick={refresh} disabled={status.loading}>
-            {status.loading ? "…" : t.refresh}
+          {status.updatedAt && (
+            <span className="upd">
+              <span className="upd-label">{t.updated}: </span>
+              <span className="num">{clock(status.updatedAt, locale)}</span>
+            </span>
+          )}
+          <button
+            className={`icon-btn refresh ${status.loading ? "spin" : ""}`}
+            onClick={refresh}
+            disabled={status.loading}
+            aria-label={t.refresh}
+            title={t.refresh}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
         </span>
       </div>
@@ -144,8 +181,13 @@ function Market({ onTrade }) {
         {!list.length && order.length > 0 && <p className="empty">{t.noResults}</p>}
         {!order.length && <p className="empty">{status.error ? t.apiError : t.tickerLoading}</p>}
       </div>
-      {canLoadMore && order.length > 0 && (
-        <button className="btn-ghost more" onClick={loadMore} disabled={status.loading}>{t.loadMore}</button>
+      {order.length > 0 && !q && (
+        <div className="list-end">
+          <span className="muted">{t.showing(order.length)}</span>
+          {canLoadMore && (
+            <button className="btn-ghost" onClick={loadMore} disabled={status.loading}>{t.loadMore}</button>
+          )}
+        </div>
       )}
     </>
   );
@@ -229,6 +271,29 @@ export default function Dashboard() {
   const [help, setHelp] = useState(false);
   const [toast, setToast] = useState(null);
   const { account } = useStore();
+  const summaryRef = useRef(null);
+  const tabsRef = useRef(null);
+  const [mini, setMini] = useState(false);
+
+  // Show the mini summary once the big summary has scrolled out of view.
+  useEffect(() => {
+    const el = summaryRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setMini(!e.isIntersecting && e.boundingClientRect.top < 0), { threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    document.documentElement.classList.toggle("mini-on", mini);
+    return () => document.documentElement.classList.remove("mini-on");
+  }, [mini]);
+
+  // Switching tabs deep in a long list: bring the tabs back to the top of the view.
+  const switchTab = (k) => {
+    setTab(k);
+    const el = tabsRef.current;
+    if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: "start" });
+  };
 
   useEffect(() => {
     if (!toast) return;
@@ -250,17 +315,17 @@ export default function Dashboard() {
 
   return (
     <>
-      <TopBar onHelp={() => setHelp(true)}>
+      <TopBar onHelp={() => setHelp(true)} below={<MiniBar show={mini} />}>
         <UserMenu />
       </TopBar>
       <Ticker />
       <main>
         <h1 className="sr-only">PaperCoin – {t.market}</h1>
-        <Summary />
+        <Summary innerRef={summaryRef} />
         <div className="wrap">
-          <div className="tabs" role="tablist">
+          <div className="tabs" role="tablist" ref={tabsRef}>
             {tabs.map(([k, label]) => (
-              <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>
+              <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => switchTab(k)}>
                 {label}
                 {k === "history" && account.trades.length > 0 && <span className="count num">{account.trades.length}</span>}
               </button>
@@ -268,7 +333,7 @@ export default function Dashboard() {
           </div>
           <div role="tabpanel">
             {tab === "market" && <Market onTrade={(id, side) => setTradeFor({ id, side })} />}
-            {tab === "portfolio" && <Portfolio onTrade={(id, side) => setTradeFor({ id, side })} goMarket={() => setTab("market")} />}
+            {tab === "portfolio" && <Portfolio onTrade={(id, side) => setTradeFor({ id, side })} goMarket={() => switchTab("market")} />}
             {tab === "history" && <History />}
           </div>
         </div>
@@ -283,6 +348,7 @@ export default function Dashboard() {
           onDone={(r) => setToast(r)}
         />
       )}
+      <ScrollTop />
       <HelpDialog open={help} onClose={() => setHelp(false)} />
       <div className="toast-zone" aria-live="polite">
         {toast && (

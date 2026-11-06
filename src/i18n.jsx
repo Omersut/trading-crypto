@@ -92,6 +92,9 @@ const dict = {
     developedBy: "Geliştiren",
     holdingsCount: (n) => `${n} coin`,
     priceStale: "fiyat bekleniyor",
+    backToTop: "Başa dön",
+    showing: (n) => `${n} coin listeleniyor`,
+    updatedShort: "Güncellendi",
   },
   en: {
     metaTitle: "PaperCoin – Crypto Paper Trading Simulator with Real Prices",
@@ -183,6 +186,9 @@ const dict = {
     developedBy: "Built by",
     holdingsCount: (n) => `${n} coin${n === 1 ? "" : "s"}`,
     priceStale: "waiting for price",
+    backToTop: "Back to top",
+    showing: (n) => `Showing ${n} coins`,
+    updatedShort: "Updated",
   },
 };
 
