@@ -1,29 +1,52 @@
-# Getting Started with Create React App
+# PaperCoin – Kripto Alım Satım Simülatörü
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  For demo: [Click](https://demo-trading-crypto.vercel.app/)
+**Gerçek fiyatlar, sanal para.** 100.000 $ sanal bakiyeyle Bitcoin, Ethereum ve yüzlerce coini al, sat, stratejini risksiz dene.
 
-   ## Wallet
-     
+🔗 Demo: https://demo-trading-crypto.vercel.app
 
- <img src="https://i.hizliresim.com/4y6nsf3.png"
-     alt="Markdown Monster icon"
-     style="float: left; margin-right: 10px;" />
-     
-In the project directory, you can run: ### `npm start` Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
- 
- 
- ## Profile
-     
+[English below](#english)
 
- <img src="https://i.hizliresim.com/t422uv2.png"
-     alt="Markdown Monster icon"
-     style="float: left; margin-right: 10px;" />
-  ## Home Page
- <img src="https://i.hizliresim.com/4ubt1g0.png"
-     alt="Markdown Monster icon"
-     style="float: left; margin-right: 10px;" />
-     
+## Özellikler
 
+- CoinGecko'dan canlı fiyatlar, her dakika otomatik yenileme ve kayan fiyat bandı
+- Dolar ya da adet olarak **kesirli alım satım** (ör. 0,005 BTC), %25 / %50 / Max kısayolları
+- Her işlemde %0,1 komisyon, işlem öncesi fiş önizlemesi
+- Portföyde coin başına **ortalama maliyet ve kâr-zarar**
+- Tüm alım satımların listelendiği **işlem geçmişi**
+- **Türkçe / İngilizce** arayüz (`?lang=tr` / `?lang=en`)
+- Giriş ekranı, "Nasıl oynanır" rehberi ve SSS
+- SEO: meta etiketleri, Open Graph görseli, JSON-LD (WebApplication + FAQPage), hreflang, sitemap
+- Kayıt gerekmez, veriler sadece tarayıcıda (localStorage) tutulur
+- Mobil uyumlu, klavyeyle kullanılabilir
 
-     
+## Çalıştırma
+
+```bash
+npm install
+npm run dev      # geliştirme sunucusu
+npm run build    # üretim derlemesi (build/ klasörü)
+npm run preview  # derlemeyi yerelde önizle
+```
+
+## Teknolojiler
+
+React 18, Vite, Context + useReducer, CoinGecko API. Harici UI kütüphanesi yok.
+
+---
+
+## English
+
+**Real prices, pretend money.** Buy and sell Bitcoin, Ethereum and hundreds of coins with a $100,000 virtual balance and practise without risk.
+
+- Live CoinGecko prices with auto-refresh and a scrolling ticker
+- Fractional trades in dollars or coins, quick 25% / 50% / Max buttons, 0.1% fee
+- Average cost and profit/loss per coin, full trade history
+- Turkish / English UI, onboarding screen, how-to-play guide and FAQ
+- SEO-ready: meta tags, Open Graph image, JSON-LD, hreflang, sitemap
+- No sign-up; data stays in your browser
+
+Run with `npm install` and `npm run dev`. Built with React 18 and Vite.
+
+*Educational simulation, not investment advice.*
+
+Developed by [@omersut](https://www.linkedin.com/in/omersut/)
