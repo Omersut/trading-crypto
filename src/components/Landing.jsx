@@ -6,6 +6,7 @@ import Ticker from "./Ticker";
 import { Faq, Steps } from "./HowTo";
 import TopBar from "./TopBar";
 import Footer from "./Footer";
+import ScrollTop from "./ScrollTop";
 
 export default function Landing() {
   const { t, locale } = useI18n();
@@ -77,6 +78,7 @@ export default function Landing() {
         </section>
       </main>
       <Footer />
+      <ScrollTop threshold={700} />
     </>
   );
 }
