@@ -19,5 +19,8 @@
     "vite": "^5.4.21"
   },
   "private": true,
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": "26.x"
+  }
 }
